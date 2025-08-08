@@ -5,7 +5,7 @@ An advanced Django-based e-commerce platform with Stripe integration for secure 
 ## 🚀 Features
 - User authentication (Register/Login)
 - Products filter
-- Shopping cart & checkout
+- Shopping wishlist, cart & checkout
 - Stripe payment gateway
 - Order history & email confirmations
 
