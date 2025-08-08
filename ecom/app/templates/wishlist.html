@@ -1,0 +1,152 @@
+{% extends 'base.html' %} {% load static %}{% load custom_filters %} {% block
+content %}
+
+<div class="mx-2 mb-2 md:mx-32 md:mb-32">
+  <div class="flex my-4 md:my-16 justify-between">
+    <div>
+      <h1 class="text-md md:text-xl">
+        Wishlist ({{wishlist_products|length}})
+      </h1>
+    </div>
+    <div>
+      <form action="{% url 'move_all_to_cart' %}" method="post">
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="py-1 px-3 md:py-2 md:px-6 border-2 rounded-sm border-gray-300 text-xs md:text-sm font-bold cursor-pointer"
+        >
+          Move All To Bag
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="flex flex-wrap gap-2 justify-start">
+    {% for product in wishlist_products %}
+    <div class="mt-10">
+      <div
+        class="w-32 h-32 md:w-64 md:h-64 bg-gray-200 rounded-lg flex flex-col justify-end relative group"
+      >
+        <!-- Delete icon at top-right -->
+        <div class="absolute top-3 right-3 z-40">
+          <a href="{% url 'product_detail' product.slug %}"
+            ><img
+              src="{% static 'Quick View.png' %}"
+              alt="quick-view"
+              class="w-7 h-7 rounded-full cursor-pointer bg-white p-1"
+          /></a>
+        </div>
+        <div class="absolute top-3 left-3 bg-red-500 rounded">
+          <p class="text-white px-2 py-1 text-xs">
+            -{{ product.discount_percent }}%
+          </p>
+        </div>
+
+        <!-- Product image centered -->
+        <div class="absolute inset-0 flex items-center justify-center z-0">
+          <img
+            src="{{ product.image.url }}"
+            alt="{{ product.title }}"
+            class="object-contain w-3/4 h-3/4"
+          />
+        </div>
+        <div
+          class="w-full bg-black justify-center text-center py-2 rounded-b-lg flex-row gap-2 hidden group-hover:flex absolute bottom-0 left-0"
+        >
+          <img src="{% static 'Cart1.png' %}" alt="" />
+          <button
+            data-product-id="{{ product.id }}"
+            class="add-to-cart-btn text-white cursor-pointer"
+            onclick="handleWishlist()"
+          >
+            Add To Cart
+          </button>
+        </div>
+      </div>
+      <p class="my-1 md:my-2 text-[10px] md:text-sm font-bold">
+        <a href="{% url 'product_detail' product.slug %}"
+          >{{ product.title }}</a
+        >
+      </p>
+      <span class="text-red-500 pr-4">${{ product.new_price }}</span>
+      <span><del class="text-gray-500">${{ product.old_price }}</del></span>
+      <span class="md:mt-2 flex items-center gap-1 md:gap-3"
+        ><img
+          src="{% static 'Five star.png' %}"
+          alt="stars"
+          class="h-3 md:h-5"
+        />
+        <span class="text-gray-400">({{ product.rating_count }})</span></span
+      >
+    </div>
+    {% empty %}
+    <p class="text-xs md:text-sm mx-auto">
+      You have no items in your wishlist.
+    </p>
+    {% endfor %}
+  </div>
+
+  <div class="flex my-4 md:my-16 justify-between items-center">
+    <div class="flex gap-4 text-center items-center">
+      <div class="px-2 h-8 bg-red-500 rounded-sm"></div>
+      <div><h1 class="text-xl">Just For You</h1></div>
+    </div>
+    <div>
+      <a
+        href="{% url 'all_products' %}"
+        class="py-1 px-3 md:py-2 md:px-6 border-2 rounded-sm border-gray-300 text-xs md:text-sm font-bold"
+      >
+        See All
+      </a>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-2 justify-evenly">
+    {% for product in products|slice:":4" %}
+    <div class="mt-10">
+      <div
+        class="w-32 h-32 md:w-64 md:h-64 bg-gray-200 rounded-lg flex flex-col justify-end relative group"
+      >
+        <div class="absolute top-3 right-3 z-10">
+          <a href="{% url 'product_detail' product.slug %}"
+            ><img
+              src="{% static 'Quick View.png' %}"
+              alt="quick-view"
+              class="w-7 h-7 rounded-full cursor-pointer bg-white p-1"
+          /></a>
+        </div>
+        <div class="absolute top-3 left-3 bg-red-500 rounded z-10">
+          <p class="text-white px-2 py-1 text-xs">
+            -{{ product.discount_percent }}%
+          </p>
+        </div>
+
+        <!-- Product image centered -->
+        <div class="absolute inset-0 flex items-center justify-center z-0">
+          <img
+            src="{{ product.image.url }}"
+            alt="{{ product.title }}"
+            class="object-contain w-3/4 h-3/4"
+          />
+        </div>
+      </div>
+      <p class="my-1 md:my-2 text-[10px] md:text-sm font-bold">
+        <a href="{% url 'product_detail' product.slug %}"
+          >{{ product.title }}</a
+        >
+      </p>
+      <span class="text-red-500 pr-4">${{ product.new_price }}</span>
+      <span><del class="text-gray-500">${{ product.old_price }}</del></span>
+      <span class="md:mt-2 flex items-center gap-1 md:gap-3"
+        ><img
+          src="{% static 'Five star.png' %}"
+          alt="stars"
+          class="h-3 md:h-5"
+        />
+        <span class="text-gray-400">({{ product.rating_count }})</span></span
+      >
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

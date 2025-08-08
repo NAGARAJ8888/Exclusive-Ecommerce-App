@@ -1,0 +1,80 @@
+{% extends 'myaccount.html' %} {% block account_section %}
+<h1 class="text-md md:text-xl text-red-500 font-bold md:mb-10">
+  Edit Your Profile
+</h1>
+<form action="">
+  <div
+    class="flex flex-col md:flex-row md:gap-12 justify-between text-xs md:text-sm"
+  >
+    <div class="md:w-1/2">
+      <label for="first-name">First Name</label>
+      <input
+        type="text"
+        id="first-name"
+        class="bg-gray-100 p-2 w-full rounded-sm my-2 dark:text-black"
+        placeholder="John"
+      />
+    </div>
+    <div class="md:w-1/2">
+      <label for="last-name">Last Name</label>
+      <input
+        type="text"
+        id="last-name"
+        class="bg-gray-100 p-2 w-full rounded-sm my-2 dark:text-black"
+        placeholder="Roy"
+      />
+    </div>
+  </div>
+
+  <div
+    class="flex flex-col md:gap-12 justify-between md:flex-row text-xs md:text-sm"
+  >
+    <div class="md:w-1/2">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        class="bg-gray-100 p-2 w-full rounded-sm my-2 dark:text-black"
+        placeholder="john123@gmail.com"
+      />
+    </div>
+    <div class="md:w-1/2">
+      <label for="address">Address</label>
+      <input
+        type="text"
+        id="address"
+        class="bg-gray-100 p-2 w-full rounded-sm my-2 dark:text-black"
+        placeholder="new yark..."
+      />
+    </div>
+  </div>
+
+  <label for="password" class="text-xs md:text-sm">Password Changes</label>
+  <input
+    type="password"
+    id="current-password"
+    class="bg-gray-100 p-2 w-full rounded-sm my-2 dark:text-black"
+    placeholder="Current Password"
+  />
+  <input
+    type="password"
+    id="new-password"
+    class="bg-gray-100 p-2 w-full rounded-sm my-2 dark:text-black"
+    placeholder="New Password"
+  />
+  <input
+    type="password"
+    id="confirm-new-password"
+    class="bg-gray-100 p-2 w-full rounded-sm my-2 dark:text-black"
+    placeholder="Confirm New Password"
+  />
+  <div class="flex justify-end mt-5">
+    <button class="cursor-pointer">Cancel</button>
+    <button
+      class="py-2 px-6 bg-red-500 rounded-sm ml-5 text-white cursor-pointer"
+    >
+      Save Changes
+    </button>
+  </div>
+</form>
+{% endblock %}

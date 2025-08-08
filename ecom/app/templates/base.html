@@ -1,0 +1,25 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}My Site{% endblock %}</title>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+  {% load tailwind_tags %}
+  {% tailwind_css %}
+</head>
+<body>
+  <header class="border-b-2 border-gray-300">
+    {% include 'navbar.html' %}
+  </header>
+
+  {% block content %}{% endblock %}
+  
+  <footer class="bg-black">
+    {% include 'footer.html' %}
+  </footer>
+  {% block scripts %}
+  {% endblock %}
+</body>
+</html>

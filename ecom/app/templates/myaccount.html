@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<div class="my-4 mx-2 md:my-10 md:mx-32">
+  <div class="flex justify-between mb-10">
+    <p class="text-xs md:text-sm">
+      <span class="text-gray-500">Home / </span>My Account
+    </p>
+    <p class="text-xs md:text-sm">
+      Welcome! <span class="text-red-500">{{ request.user.first_name }}</span>
+    </p>
+  </div>
+
+  {% comment %} left section {% endcomment %}
+  <div class="flex flex-col lg:flex-row gap-20">
+    <div>
+      <h1 class="text-sm font-bold">Manage My Account</h1>
+      <ul class="ml-5 text-sm">
+        <li class="mt-2">
+          <a href="{% url 'account_profile' %}">My Profile</a>
+        </li>
+        <li class="mt-2">
+          <a href="{% url 'account_address' %}">Address Book</a>
+        </li>
+        <li class="mt-2">
+          <a href="{% url 'account_payment' %}">My Payment Options</a>
+        </li>
+        <li class="mt-2"><a href="{% url 'my_returns' %}">My Returns</a></li>
+        <li class="mt-2"><a href="{% url 'my_cancels' %}">My Cancels</a></li>
+      </ul>
+    </div>
+
+    {% comment %} right section {% endcomment %}
+    <div
+      class="px-2 py-2 md:px-20 md:py-12 border-2 border-gray-200 rounded-md lg:w-2/3 mx-auto"
+    >
+      {% block account_section %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

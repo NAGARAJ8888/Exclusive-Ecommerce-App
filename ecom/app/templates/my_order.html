@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% load custom_filters %} {% block content %}
+<div class="py-12 md:mx-32">
+  <h1 class="text-3xl mb-8">My Orders</h1>
+  <div class="flex flex-col md:flex-row items-center">
+    {% for order in orders %}
+    <div class="border p-4 rounded-lg w-fit mb-6">
+      <p class="text-lg font-semibold">
+        Order #{{ order.id }} | Status: {{ order.status }}
+      </p>
+      <p class="text-sm text-gray-500">Placed on: {{ order.created_at }}</p>
+      <ul class="mt-4">
+        {% for item in order.items.all %}
+        <li class="flex items-center gap-4">
+          <img
+            src="{{ item.product.image.url }}"
+            alt="{{ item.product.title }}"
+            class="w-16 h-16 object-contain rounded"
+          />
+
+          <div>
+            <p class="font-semibold">{{ item.product.title }}</p>
+            <p class="text-sm text-gray-600">
+              ₹{{ item.product.new_price|floatformat:0 }} × {{ item.quantity }}
+              = ₹{{ item.product.new_price|floatformat:0|mul:item.quantity }}
+            </p>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% empty %}
+    <p>You haven't placed any orders yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

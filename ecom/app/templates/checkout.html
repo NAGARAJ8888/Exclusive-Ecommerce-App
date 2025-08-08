@@ -1,0 +1,202 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<div class="px-4 py-8 md:px-16 lg:px-32">
+  <div class="text-xs md:text-sm">
+    <p>
+      <span class="text-gray-500"
+        >Account / My Account / Product / View Cart / </span
+      >CheckOut
+    </p>
+  </div>
+
+  <div
+    class="flex flex-col lg:flex-row justify-between mt-4 md:mt-20 gap-2 md:gap-20 xl:gap-44 lg:gap-32"
+  >
+    <!-- Billing Section -->
+    <div class="w-full">
+      <h1 class="text-2xl md:text-4xl mb-2 md:mb-8">Billing Details</h1>
+
+      <form
+        id="checkout-form"
+        action="{% url 'create_checkout_session' %}"
+        method="POST"
+      >
+        {% csrf_token %}
+        <div class="flex md:gap-10 flex-col md:flex-row text-xs md:text-sm">
+          <!-- Left: Billing Form -->
+          <div class="w-full md:w-1/2">
+            <label for="first-name">First Name</label>
+            <input
+              type="text"
+              name="first_name"
+              id="first-name"
+              required
+              class="bg-gray-300 p-2 w-full rounded-sm my-2 dark:text-black"
+            />
+
+            <label for="street-address">Street Address</label>
+            <input
+              type="text"
+              name="street_address"
+              id="street-address"
+              required
+              class="bg-gray-300 p-2 w-full rounded-sm my-2 dark:text-black"
+            />
+
+            <label for="appartment">Appartment, floor, etc. (Optional)</label>
+            <input
+              type="text"
+              name="appartment"
+              id="appartment"
+              class="bg-gray-300 p-2 w-full rounded-sm my-2 dark:text-black"
+            />
+
+            <label for="city">Town/City</label>
+            <input
+              type="text"
+              name="city"
+              id="city"
+              required
+              class="bg-gray-300 p-2 w-full rounded-sm my-2 dark:text-black"
+            />
+
+            <label for="phone-number">Phone Number</label>
+            <input
+              type="text"
+              name="phone_number"
+              id="phone-number"
+              required
+              class="bg-gray-300 p-2 w-full rounded-sm my-2 dark:text-black"
+            />
+
+            <label for="email">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              required
+              class="bg-gray-300 p-2 w-full rounded-sm my-2 dark:text-black"
+            />
+
+            <p class="flex items-center justify-center mt-4 text-xs">
+              <input type="checkbox" class="size-4" />
+              <span class="ml-2"
+                >Save this information for faster check-out next time</span
+              >
+            </p>
+          </div>
+
+          <!-- Right: Order Summary -->
+          <div class="w-full md:w-1/2">
+            <div class="mt-10">
+              {% for item in cart_items %}
+              <div
+                class="flex justify-between items-center text-xl py-2 border-b"
+              >
+                <div>
+                  <span class="text-sm md:text-lg"
+                    >{{ item.product.title }} × {{ item.quantity }}</span
+                  ><br />
+                  <span class="text-sm text-gray-500"
+                    >₹{{ item.product.new_price|floatformat:2 }}</span
+                  >
+                </div>
+              </div>
+              {% endfor %}
+
+              <p
+                class="flex justify-between text-lg py-3 border-b-2 border-gray-500"
+              >
+                <span>Subtotal:</span> <span>₹{{ total|floatformat:2 }}</span>
+              </p>
+              <p
+                class="flex justify-between text-lg py-3 border-b-2 border-gray-500"
+              >
+                <span>Shipping:</span> <span>Free</span>
+              </p>
+              <p class="flex justify-between text-lg py-3">
+                <span>Total:</span> <span>₹{{ total|floatformat:2 }}</span>
+              </p>
+
+              <p class="flex items-center">
+                <input
+                  type="radio"
+                  name="payment_method"
+                  value="bank"
+                  required
+                  class="size-5 mr-3 accent-red-500"
+                  checked
+                />
+                <span class="flex space-x-20">
+                  <span>Bank</span
+                  ><span
+                    ><img src="{% static 'bank-logo.png' %}" alt=""
+                  /></span>
+                </span>
+              </p>
+
+              <button
+                type="submit"
+                class="bg-red-400 text-white py-2 px-6 rounded-sm mt-4 w-full cursor-pointer"
+              >
+                Place Order
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Remove buttons (placed outside the main form to prevent accidental submission) -->
+    <div class="mt-4">
+      {% for item in cart_items %}
+      <form
+        method="POST"
+        action="{% url 'remove_from_checkout' item.id %}"
+        class="mt-2"
+      >
+        {% csrf_token %}
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-600"
+            >Remove {{ item.product.title }}?</span
+          >
+          <button class="text-red-500 text-sm underline cursor-pointer">
+            Remove
+          </button>
+        </div>
+      </form>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block script %}
+<script>
+  document
+    .getElementById("checkout-form")
+    .addEventListener("submit", function (e) {
+      const requiredFields = [
+        "first-name",
+        "street-address",
+        "city",
+        "phone-number",
+        "email",
+      ];
+      let allFilled = true;
+
+      requiredFields.forEach((fieldId) => {
+        const field = document.getElementById(fieldId);
+        if (!field.value.trim()) {
+          field.classList.add("border-red-500");
+          allFilled = false;
+        } else {
+          field.classList.remove("border-red-500");
+        }
+      });
+
+      if (!allFilled) {
+        alert("Please fill in all the billing details.");
+        e.preventDefault();
+      }
+    });
+</script>
+{% endblock %}

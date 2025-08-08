@@ -1,0 +1,213 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<div class="mx-4 md:mx-20 lg:mx-24 xl:mx-28 2xl:mx-32 my-10 md:my-20">
+  <div class="mb-10 md:mb-20">
+    <p class="text-sm">
+      <span class="text-gray-400">Account / Gaming / </span>{{ product.title }}
+    </p>
+  </div>
+
+  <div
+    class="flex flex-col justify-between md:flex-row md:items-center md:gap-10"
+  >
+    <div
+      class="flex flex-col-reverse md:flex-col-reverse lg:flex-row items-center gap-4"
+    >
+      <div
+        id="thumbnails"
+        class="flex flex-row gap-4 lg:flex-col xl:flex-col justify-between scrollbar-hide overflow-y-auto min-h-[138px] scroll-smooth"
+      >
+        {% for image in product.extra_images.all %}
+        <img
+          src="{{ image.image.url }}"
+          alt="Extra Image"
+          class="object-cover p-4 w-[170px] h-[138px] cursor-pointer border-2 bg-gray-200 border-black dark:border-white"
+          onclick="swapImage(this)"
+        />
+        {% endfor %}
+      </div>
+      <div
+        class="w-[300px] md:w-[500px] md:h-[600px] flex items-center justify-center bg-gray-300"
+      >
+        <img
+          id="main-product-image"
+          src="{{ product.image.url }}"
+          alt="{{ product.title }}"
+          class="object-contain w-full h-full max-h-full p-5"
+        />
+      </div>
+    </div>
+    <div class="max-w-[399px]">
+      <h1 class="text-lg font-semibold">Havic HV G-92 Gamepad</h1>
+      <span class="flex my-2"
+        ><img src="{% static 'Four Star.png' %}" alt="" class="h-5" /><span
+          class="mx-2 text-sm text-gray-400"
+          >({{ product.rating_count }} Reviews) | </span
+        ><span class="text-green-400">In Stock</span></span
+      >
+      <h1 class="text-lg mb-2">${{ product.new_price }}</h1>
+      <p>{{ product.description }}</p>
+      <div class="border-2 border-gray-300 w-full my-4 rounded-full"></div>
+      <form action="">
+        {% if product.colors.exists %}
+        <span class="flex items-center gap-2 text-xl mb-2">
+          Colours: {% for color in product.colors.all %}
+          <label class="flex items-center gap-1">
+            <input
+              type="radio"
+              name="color"
+              value="{{ color.name }}"
+              class="size-4"
+              style="accent-color: {{ color.hex_code|default:'#000000' }}"
+            />
+            <span class="text-sm">{{ color.name }}</span>
+          </label>
+          {% endfor %}
+        </span>
+        {% endif %} {% comment %}
+        <span class="flex items-center gap-2 my-4 text-xl">
+          Size:
+          <span class="px-3 py-1 border-2 border-gray-300 rounded-md text-sm"
+            >XS</span
+          >
+          <span class="px-3 py-1 border-2 border-gray-300 rounded-md text-sm"
+            >S</span
+          >
+          <span
+            class="px-3 py-1 border-2 bg-red-500 text-white rounded-md text-sm"
+            >M</span
+          >
+          <span class="px-3 py-1 border-2 border-gray-300 rounded-md text-sm"
+            >L</span
+          >
+          <span class="px-3 py-1 border-2 border-gray-300 rounded-md text-sm"
+            >XL</span
+          >
+        </span>
+        {% endcomment %}
+
+        <div class="flex items-center gap-4 my-4">
+          <button
+            type="button"
+            class="py-2 px-10 rounded-sm bg-red-500 text-white buy-now-btn cursor-pointer"
+            data-product-id="{{ product.id }}"
+          >
+            <a href="{% url 'cart' %}">Buy Now</a>
+          </button>
+
+          {% if product.id in wishlist_ids %}
+          <img
+            src="{% static 'red_heart.png' %}"
+            data-product-id="{{ product.id }}"
+            class="w-7 h-7 rounded-sm cursor-pointer bg-white p-1 heart-icon"
+          />
+          {% else %}
+          <img
+            src="{% static 'white_heart.png' %}"
+            data-product-id="{{ product.id }}"
+            class="w-7 h-7 rounded-sm cursor-pointer bg-white p-1 heart-icon"
+          />
+          {% endif %}
+        </div>
+
+        <div class="mt-8">
+          <div
+            class="flex items-center gap-4 my-4 border-2 border-gray-500 rounded-md p-4"
+          >
+            <div>
+              <img src="{% static 'icon-delivery.png' %}" alt="" />
+            </div>
+            <div>
+              <h3 class="text-red-500">Free Delivery</h3>
+              <p class="text-sm">
+                Enter your postal code for Delivery Availability
+              </p>
+            </div>
+          </div>
+          <div
+            class="flex items-center gap-4 my-4 border-2 border-gray-500 rounded-md p-4"
+          >
+            <div>
+              <img src="{% static 'Icon-return.png' %}" alt="" />
+            </div>
+            <div>
+              <h3 class="text-red-500">Return Delivery</h3>
+              <p class="text-sm">Free 30 Days Delivery Returns. Details</p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script>
+  function swapImage(thumbnail) {
+    const mainImage = document.getElementById("main-product-image");
+
+    // Store the current main image source
+    const mainSrc = mainImage.src;
+
+    // Swap the thumbnail's src with the main image
+    mainImage.src = thumbnail.src;
+    thumbnail.src = mainSrc;
+  }
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const csrftoken = document.cookie.match(/csrftoken=([\w-]+)/)?.[1];
+
+    document.querySelectorAll(".heart-icon").forEach((icon) => {
+      icon.addEventListener("click", function () {
+        const productId = this.dataset.productId;
+
+        fetch("{% url 'toggle_wishlist' %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrftoken,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `product_id=${productId}`,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "added") {
+              icon.src = "{% static 'red_heart.png' %}";
+            } else if (data.status === "removed") {
+              icon.src = "{% static 'white_heart.png' %}";
+            }
+          })
+          .catch((err) => console.error("Wishlist toggle error:", err));
+      });
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const csrftoken = document.cookie.match(/csrftoken=([\w-]+)/)?.[1];
+
+    document.querySelectorAll(".buy-now-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const productId = btn.getAttribute("data-product-id");
+
+        fetch(`/add-to-cart/${productId}/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success") {
+              alert("Product added to cart!");
+              // Optionally redirect to checkout:
+              // window.location.href = "/checkout/";
+            }
+          });
+      });
+    });
+  });
+</script>
+{% endblock %}

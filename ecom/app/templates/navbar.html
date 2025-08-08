@@ -1,0 +1,190 @@
+{% load static %}
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById("mobile-menu");
+    menu.classList.toggle("translate-x-0");
+    menu.classList.toggle("-translate-x-full");
+  }
+</script>
+
+<nav
+  class="flex items-center justify-between py-2 md:py-4 md:pt-12 md:pb-6 mx-2 lg:mx-32 relative"
+>
+  <!-- Hamburger (Shown only on small screens) -->
+  <div class="block lg:hidden">
+    <button onclick="toggleMenu()">
+      <svg
+        class="w-8 h-8"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Logo (Hidden on small screens) -->
+  <h1 class="text-2xl font-bold pb-2 font-sans">
+    <a href="{% url 'home' %}">Exclusive</a>
+  </h1>
+
+  <!-- Desktop Menu -->
+  <ul class="hidden lg:flex gap-12 text-[16px]">
+    <li
+      class="{% if request.resolver_match.url_name == 'home' %}border-b-2 border-gray-400{% endif %}"
+    >
+      <a href="{% url 'home' %}">Home</a>
+    </li>
+    <li
+      class="{% if request.resolver_match.url_name == 'contact' %}border-b-2 border-gray-400{% endif %}"
+    >
+      <a href="{% url 'contact' %}">Contact</a>
+    </li>
+    <li
+      class="{% if request.resolver_match.url_name == 'about' %}border-b-2 border-gray-400{% endif %}"
+    >
+      <a href="{% url 'about' %}">About</a>
+    </li>
+    <li
+      class="{% if request.resolver_match.url_name == 'signup' %}border-b-2 border-gray-400{% endif %}"
+    >
+      <a href="{% url 'signup' %}">Sign Up</a>
+    </li>
+  </ul>
+
+  <!-- Right Icons -->
+  <div class="flex gap-2 md:gap-6 items-center">
+    <!-- Search bar -->
+    <div class="relative items-center hidden md:flex">
+      <input
+        type="text"
+        placeholder="What are you looking for?"
+        class="bg-gray-100 rounded-sm px-5 py-2 pr-10 w-50 md:w-60 text-xs md:text-sm dark:text-black"
+      />
+      <img
+        src="{% static 'search-icon.png' %}"
+        alt="Search"
+        class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2"
+      />
+    </div>
+
+    <!-- Wishlist -->
+    <div class="relative">
+      <a href="{% url 'wishlist' %}">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-6 md:size-8 {% if wishlist_count > 0 %}text-red-500{% else %}dark:text-white{% endif %}"
+          fill="{% if wishlist_count > 0 %}currentColor{% else %}none{% endif %}"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5C14.377 3.75 12.715 4.876 12 6.483c-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+          />
+        </svg>
+        {% if wishlist_count > 0 %}
+        <span
+          class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white animate-ping"
+        ></span>
+        <span
+          class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"
+        ></span>
+        {% endif %}
+      </a>
+    </div>
+
+    <!-- Cart -->
+    <a href="{% url 'cart' %}" class="">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-6 md:size-8 dark:text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M2.25 3h1.386c.51 0 .955.343 1.087.835L5.106 5.27M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138A60.114 60.114 0 0 0 4.107 5.27M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+        />
+      </svg>
+    </a>
+
+    <!-- Profile -->
+    {% if user.is_authenticated %}
+    <div class="relative group inline-block">
+      <img src="{% static 'user.png' %}" alt="" class="size-8 cursor-pointer" />
+      <div
+        class="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-50 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-200"
+      >
+        <ul class="text-sm text-gray-700">
+          {% comment %}
+          <li>
+            <a
+              href="{% url 'account_profile' %}"
+              class="block px-4 py-2 hover:bg-gray-100"
+              >Manage My Account</a
+            >
+          </li>
+          {% endcomment %}
+          <li>
+            <a
+              href="{% url 'my_orders' %}"
+              class="block px-4 py-2 hover:bg-gray-100"
+              >My Orders</a
+            >
+          </li>
+          {% comment %}
+          <li>
+            <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+              >My Cancellations</a
+            >
+          </li>
+          {% endcomment %} {% comment %}
+          <li>
+            <a href="#" class="block px-4 py-2 hover:bg-gray-100">My Reviews</a>
+          </li>
+          {% endcomment %}
+          <li>
+            <a
+              href="{% url 'logout' %}"
+              class="block px-4 py-2 hover:bg-gray-100"
+              >Logout</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Mobile Slide-in Menu -->
+  <div
+    id="mobile-menu"
+    class="fixed top-0 left-0 z-50 w-64 h-full shadow-lg transform -translate-x-full transition-transform duration-300 lg:hidden dark:bg-black"
+  >
+    <div class="p-4">
+      <button onclick="toggleMenu()" class="mb-4 text-2xl text-gray-600">
+        ✕ Close
+      </button>
+      <div class="flex justify-center">
+        <ul class="flex flex-col gap-6 text-lg">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+          <li><a href="{% url 'about' %}">About</a></li>
+          <li><a href="{% url 'signup' %}">Sign Up</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

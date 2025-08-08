@@ -1,0 +1,889 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+<div class="mx-1 md:mx-20 lg:mx-24 xl:mx-28 2xl:mx-32">
+  <div class="flex justify-between items-center gap-8">
+    <div class="hidden lg:block">
+      <ul class="flex flex-col gap-4">
+        {% for category in categories %}
+        <li>
+          <a href="{% url 'all_products' %}?category={{ category.id }}">
+            {{ category.name }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div
+      class="border-2 border-gray-400 rounded-lg min-h-[455px] hidden lg:block ml-8"
+    ></div>
+
+    <div class="flex-1">
+      <img
+        src="{% static 'hero-img.png' %}"
+        alt="Hero"
+        class="w-full h-auto object-cover"
+      />
+    </div>
+  </div>
+
+  <div class="mt-5 md:mt-20">
+    <div class="flex items-center gap-3 mb-4 md:mb-8">
+      <div class="w-4 h-8 bg-red-500 rounded-md"></div>
+      <div><p class="text-[16px] text-red-500 font-semibold">Today’s</p></div>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl md:text-4xl font-semibold">Flash Sales</h1>
+      <div></div>
+      <div class="flex items-center gap-3">
+        <button
+          id="scrollLeft"
+          class="bg-gray-300 p-1 md:p-2 rounded-full cursor-pointer"
+        >
+          <img src="{% static 'icons_arrow-left.png' %}" alt="" />
+        </button>
+        <button
+          id="scrollRight"
+          class="bg-gray-300 p-1 md:p-2 rounded-full cursor-pointer"
+        >
+          <img src="{% static 'icons arrow-right.png' %}" alt="" />
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="productScroller"
+      class="md:mb-20 md:mt-10 flex gap-4 md:gap-8 overflow-x-auto scrollbar-hide justify-between"
+    >
+      {% for product in products|slice:":8" %}
+      <div class="mt-10">
+        <div
+          class="w-32 h-32 md:w-64 md:h-64 bg-gray-200 rounded-lg flex flex-col justify-end relative group"
+        >
+          <!-- Delete icon at top-right -->
+          <div class="absolute top-3 right-3 z-40">
+            {% if product.id in wishlist_ids %}
+            <img
+              src="{% static 'red_heart.png' %}"
+              data-product-id="{{ product.id }}"
+              class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
+            />
+            {% else %}
+            <img
+              src="{% static 'white_heart.png' %}"
+              onclick="handleWishlist()"
+              data-product-id="{{ product.id }}"
+              class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
+            />
+            {% endif %}
+
+            <a href="{% url 'product_detail' product.slug %}"
+              ><img
+                src="{% static 'Quick View.png' %}"
+                alt="quick-view"
+                class="w-7 h-7 rounded-full cursor-pointer bg-white p-1 mt-3"
+            /></a>
+          </div>
+          <div class="absolute top-3 left-3 bg-red-500 rounded z-10">
+            <p class="text-white px-2 py-1 text-xs">
+              -{{ product.discount_percent }}%
+            </p>
+          </div>
+
+          <!-- Product image centered -->
+          <div class="absolute inset-0 flex items-center justify-center z-0">
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.title }}"
+              class="object-contain w-3/4 h-3/4"
+            />
+          </div>
+          <div
+            class="w-full bg-black justify-center text-center py-2 rounded-b-lg flex-row gap-2 hidden group-hover:flex absolute bottom-0 left-0"
+          >
+            <img src="{% static 'Cart1.png' %}" alt="" />
+            <button
+              data-product-id="{{ product.id }}"
+              class="text-xs md:text-sm add-to-cart-btn text-white cursor-pointer"
+              onclick="handleWishlist()"
+            >
+              Add To Cart
+            </button>
+          </div>
+        </div>
+        <p class="my-2 text-[10px] md:text-sm font-bold">
+          <a href="{% url 'product_detail' product.slug %}"
+            >{{ product.title }}</a
+          >
+        </p>
+        <span class="text-red-500 pr-4">${{ product.new_price }}</span>
+        <span><del class="text-gray-500">${{ product.old_price }}</del></span>
+        <span class="mt-2 flex items-center gap-3"
+          ><img
+            src="{% static 'Five star.png' %}"
+            alt="stars"
+            class="h-3 md:h-5"
+          />
+          <span class="text-gray-400">({{ product.rating_count }})</span></span
+        >
+      </div>
+      {% endfor %}
+    </div>
+    <button class="flex justify-center items-center w-full">
+      <a
+        href="{% url 'all_products' %}"
+        class="bg-red-500 text-white mt-10 px-10 py-2 md:px-12 md:py-3 rounded-md hover:bg-red-600 transition duration-300"
+        >View All Products</a
+      >
+    </button>
+  </div>
+  <div class="w-full border-2 border-gray-300 my-10 md:my-20"></div>
+
+  <div class="flex items-center gap-3 mb-8">
+    <div class="w-4 h-8 bg-red-500 rounded-md"></div>
+    <div><p class="text-[16px] text-red-500 font-semibold">Categories</p></div>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl md:text-4xl font-semibold">Browse By Category</h1>
+    <div></div>
+    <div class="flex items-center gap-3">
+      <button
+        id="scrollCategoryLeft"
+        class="bg-gray-300 p-1 md:p-2 rounded-full"
+      >
+        <img src="{% static 'icons_arrow-left.png' %}" alt="" />
+      </button>
+      <button
+        id="scrollCategoryRight"
+        class="bg-gray-300 p-1 md:p-2 rounded-full"
+      >
+        <img src="{% static 'icons arrow-right.png' %}" alt="" />
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="my-10 flex gap-6 md:gap-12 overflow-x-auto scrollbar-hide flex-nowrap min-w-full"
+    id="CategoryScroller"
+  >
+    <div
+      class="flex min-w-[120px] min-h-28 md:min-w-[170px] md:min-h-[145px] flex-col items-center justify-center border-2 border-gray-400 rounded-lg relative group"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="size-10 md:size-14 dark:text-white"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+        />
+      </svg>
+
+      <p>Phones</p>
+    </div>
+
+    <div
+      class="flex min-w-[120px] min-h-28 md:min-w-[170px] md:min-h-[145px] flex-col items-center justify-center border-2 border-gray-400 rounded-lg relative group"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="size-10 md:size-14 dark:text-white"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"
+        />
+      </svg>
+
+      <p>Computers</p>
+    </div>
+    <div
+      class="flex min-w-[120px] min-h-28 md:min-w-[170px] md:min-h-[145px] flex-col items-center justify-center border-2 border-gray-400 rounded-lg relative group"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="size-10 md:size-14 dark:text-white"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
+        />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
+        />
+      </svg>
+
+      <p>Camera</p>
+    </div>
+    <div
+      class="flex min-w-[120px] min-h-28 md:min-w-[170px] md:min-h-[145px] flex-col items-center justify-center border-2 border-gray-400 rounded-lg relative group"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-10 md:size-14 dark:text-white"
+      >
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            d="M6.00014 11H10.0001M8.00014 9V13M15.0001 12H15.0101M18.0001 10H18.0101M10.4491 5H13.5512C16.1761 5 17.4885 5 18.5187 5.49743C19.4257 5.9354 20.1793 6.63709 20.6808 7.51059C21.2503 8.5027 21.3438 9.81181 21.5309 12.43L21.7769 15.8745C21.8975 17.5634 20.5599 19 18.8667 19C18.0008 19 17.1796 18.6154 16.6253 17.9502L16.2501 17.5C15.907 17.0882 15.7354 16.8823 15.54 16.7159C15.1305 16.3672 14.6346 16.1349 14.1045 16.0436C13.8516 16 13.5836 16 13.0476 16H10.9527C10.4167 16 10.1487 16 9.89577 16.0436C9.36563 16.1349 8.86981 16.3672 8.46024 16.7159C8.26487 16.8823 8.09329 17.0882 7.75013 17.5L7.37497 17.9502C6.82064 18.6154 5.99949 19 5.13359 19C3.44037 19 2.10275 17.5634 2.22339 15.8745L2.46942 12.43C2.65644 9.81181 2.74994 8.5027 3.31951 7.51059C3.82098 6.63709 4.57458 5.9354 5.48159 5.49743C6.51176 5 7.8242 5 10.4491 5Z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+        </g>
+      </svg>
+      <p>Gaming</p>
+    </div>
+    <div
+      class="flex min-w-[120px] min-h-28 md:min-w-[170px] md:min-h-[145px] flex-col items-center justify-center border-2 border-gray-400 rounded-lg relative group"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-10 md:size-14 text-black dark:text-white"
+        fill="currentColor"
+      >
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            d="M20,18h-.07A1,1,0,0,1,19,16.93l.36-5A7.38,7.38,0,0,0,6.6,6.35a7.31,7.31,0,0,0-2,5.56l.36,5a1,1,0,0,1-2,.14l-.36-5a9.38,9.38,0,1,1,18.72,0l-.36,5A1,1,0,0,1,20,18Z"
+          />
+          <path
+            d="M17,11H16a2,2,0,0,0-2,2v7a2,2,0,0,0,2,2h1a4,4,0,0,0,4-4V15A4,4,0,0,0,17,11Z"
+          />
+          <path
+            d="M8,11H7a4,4,0,0,0-4,4v3a4,4,0,0,0,4,4H8a2,2,0,0,0,2-2V13A2,2,0,0,0,8,11Z"
+          />
+        </g>
+      </svg>
+
+      <p>HeadPhones</p>
+    </div>
+    <div
+      class="flex min-w-[120px] min-h-28 md:min-w-[170px] md:min-h-[145px] flex-col items-center justify-center border-2 border-gray-400 rounded-lg relative group"
+    >
+      <svg
+        viewBox="-18.84 0 122.88 122.88"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        class="size-10 md:size-14 text-black dark:text-white"
+        fill="currentColor"
+      >
+        <g>
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M79.88,52.56c2.97,0.27,5.31,2.78,5.31,5.81v7.14c0,3.03-2.35,5.54-5.31,5.81v14.37 
+      c0,4.54-1.86,8.67-4.85,11.67c-2.99,2.99-7.12,4.85-11.67,4.85h-1.51H17.69h-1.18c-4.54,0-8.67-1.86-11.67-4.85 
+      C1.86,94.36,0,90.23,0,85.69v-47.5c0-4.54,1.86-8.67,4.85-11.67c2.99-2.99,7.12-4.85,11.67-4.85h1.18V4.12 
+      c0-2.27,1.85-4.12,4.12-4.12h35.92c2.27,0,4.12,1.86,4.12,4.12v17.55h1.51c4.54,0,8.67,1.86,11.67,4.85 
+      c2.99,2.99,4.85,7.12,4.85,11.67V52.56L79.88,52.56z M37.34,44.57l10.19,0.12l-4.75,15.37h11L35.68,82.47l4.6-15.45h-8.86 
+      L37.34,44.57L37.34,44.57z M21.94,32.53h36c6.14,0,11.16,5.02,11.16,11.16v36.5c0,6.14-5.02,11.16-11.16,11.16h-36 
+      c-6.14,0-11.16-5.02-11.16-11.16v-36.5C10.78,37.55,15.8,32.53,21.94,32.53L21.94,32.53z M63.37,25.65H16.52 
+      c-3.44,0-6.58,1.41-8.85,3.68c-2.27,2.27-3.68,5.41-3.68,8.85v47.5c0,3.44,1.41,6.58,3.68,8.85c2.27,2.27,5.41,3.68,8.85,3.68 
+      h46.85c3.44,0,6.58-1.41,8.85-3.68c2.27-2.27,3.68-5.41,3.68-8.85v-47.5c0-3.44-1.41-6.58-3.68-8.85 
+      C69.94,27.07,66.81,25.65,63.37,25.65L63.37,25.65z M61.86,102.2v16.56c0,2.27-1.86,4.12-4.12,4.12H21.82 
+      c-2.27,0-4.12-1.85-4.12-4.12V102.2H61.86L61.86,102.2z"
+          />
+        </g>
+      </svg>
+
+      <p>SmartWatch</p>
+    </div>
+  </div>
+
+  <div class="w-full border-2 border-gray-300 my-10 md:my-20"></div>
+
+  <div>
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-4 h-8 bg-red-500 rounded-md"></div>
+      <div>
+        <p class="text-[16px] text-red-500 font-semibold">This Month</p>
+      </div>
+    </div>
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl md:text-4xl font-semibold">Best Selling Products</h1>
+      <div></div>
+      <div class="flex items-center gap-3">
+        <a
+          href="{% url 'all_products' %}"
+          class="bg-red-500 py-2 px-10 rounded-sm text-white text-center"
+        >
+          View All
+        </a>
+      </div>
+    </div>
+    <div
+      id="productScroller"
+      class="mb-20 md:mt-10 flex gap-4 md:gap-8 overflow-x-auto scrollbar-hide justify-evenly items-center"
+    >
+      {% for product in products %}
+      <div class="mt-10">
+        <div
+          class="w-32 h-32 md:w-64 md:h-64 bg-gray-200 rounded-lg flex flex-col justify-end relative group"
+        >
+          <!-- Delete icon at top-right -->
+          <div class="absolute top-3 right-3 z-40">
+            {% if product.id in wishlist_ids %}
+            <img
+              src="{% static 'red_heart.png' %}"
+              data-product-id="{{ product.id }}"
+              class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
+            />
+            {% else %}
+            <img
+              src="{% static 'white_heart.png' %}"
+              data-product-id="{{ product.id }}"
+              class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
+            />
+            {% endif %}
+
+            <a href="{% url 'product_detail' product.slug %}"
+              ><img
+                src="{% static 'Quick View.png' %}"
+                alt="quick-view"
+                class="w-7 h-7 rounded-full cursor-pointer bg-white p-1 mt-3"
+            /></a>
+          </div>
+          <div class="absolute top-3 left-3 bg-red-500 rounded z-10">
+            <p class="text-white px-2 py-1 text-xs">
+              -{{ product.discount_percent }}%
+            </p>
+          </div>
+
+          <!-- Product image centered -->
+          <div class="absolute inset-0 flex items-center justify-center z-0">
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.title }}"
+              class="object-contain w-3/4 h-3/4"
+            />
+          </div>
+          <div
+            class="w-full bg-black justify-center text-center py-2 rounded-b-lg flex-row gap-2 hidden group-hover:flex absolute bottom-0 left-0"
+          >
+            <img src="{% static 'Cart1.png' %}" alt="" />
+            <button
+              data-product-id="{{ product.id }}"
+              class="text-xs md:text-sm add-to-cart-btn text-white cursor-pointer"
+            >
+              Add To Cart
+            </button>
+          </div>
+        </div>
+        <p class="my-2 text-[10px] md:text-sm font-bold">
+          <a href="{% url 'product_detail' product.slug %}"
+            >{{ product.title }}</a
+          >
+        </p>
+        <span class="text-red-500 pr-4">${{ product.new_price }}</span>
+        <span><del class="text-gray-500">${{ product.old_price }}</del></span>
+        <span class="mt-2 flex items-center gap-3"
+          ><img
+            src="{% static 'Five star.png' %}"
+            alt="stars"
+            class="h-3 md:h-5"
+          />
+          <span class="text-gray-400">({{ product.rating_count }})</span></span
+        >
+      </div>
+      {% endfor %}
+    </div>
+
+    <section>
+      <div
+        class="flex flex-col-reverse md:flex-row justify-between items-center gap-2 md:gap-8 my-20 md:p-14 bg-black text-white"
+      >
+        <div class="flex flex-col py-3 md:gap-7">
+          <p class="text-lg font-semibold text-[#00FF66]">Categories</p>
+          <h1
+            class="text-2xl md:text-5xl font-semibold tracking-wider leading-snug"
+          >
+            Enhance Your<br />
+            Music Experience
+          </h1>
+          <div class="flex gap-4 mt-4" id="countdown">
+            <div
+              class="relative size-14 md:size-16 bg-white rounded-full items-center flex flex-col justify-center text-black"
+            >
+              <p class="text-xl font-bold absolute top-2" id="days">00</p>
+              <p class="text-xs font-semibold absolute top-8">Days</p>
+            </div>
+            <div
+              class="relative size-14 md:size-16 bg-white rounded-full items-center flex flex-col justify-center text-black"
+            >
+              <p class="text-xl font-bold absolute top-2" id="hours">00</p>
+              <p class="text-xs font-semibold absolute top-8">Hours</p>
+            </div>
+            <div
+              class="relative size-14 md:size-16 bg-white rounded-full items-center flex flex-col justify-center text-black"
+            >
+              <p class="text-xl font-bold absolute top-2" id="minutes">00</p>
+              <p class="text-xs font-semibold absolute top-8">Minutes</p>
+            </div>
+            <div
+              class="relative size-14 md:size-16 bg-white rounded-full items-center flex flex-col justify-center text-black"
+            >
+              <p class="text-xl font-bold absolute top-2" id="seconds">00</p>
+              <p class="text-xs font-semibold absolute top-8">Seconds</p>
+            </div>
+          </div>
+
+          <a
+            href="{% url 'product_detail' 'jbl-ultr-music-24' %}"
+            class="px-14 py-4 bg-[#00FF66] rounded-md self-start text-[16px] mt-6"
+          >
+            Buy Now!
+          </a>
+        </div>
+        <div>
+          <img src="{% static 'JBL-img.png' %}" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-4 h-8 bg-red-500 rounded-md"></div>
+        <div>
+          <p class="text-[16px] text-red-500 font-semibold">Our Products</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl md:text-4xl font-semibold">Explore Our Products</h1>
+      </div>
+      <div
+        class="flex flex-wrap justify-evenly items-center gap-8 mt-10 md:mb-20"
+      >
+        {% for product in products|slice:":8" %}
+        <div class="md:mt-10">
+          <div
+            class="w-32 h-32 md:w-64 md:h-64 bg-gray-200 rounded-lg flex flex-col justify-end relative group"
+          >
+            <!-- icon at top-right -->
+            <div class="absolute top-3 right-3 z-40">
+              {% if product.id in wishlist_ids %}
+              <img
+                src="{% static 'red_heart.png' %}"
+                data-product-id="{{ product.id }}"
+                class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
+              />
+              {% else %}
+              <img
+                src="{% static 'white_heart.png' %}"
+                data-product-id="{{ product.id }}"
+                class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
+              />
+              {% endif %}
+
+              <a href="{% url 'product_detail' product.slug %}"
+                ><img
+                  src="{% static 'Quick View.png' %}"
+                  alt="quick-view"
+                  class="w-7 h-7 rounded-full cursor-pointer bg-white p-1 mt-3"
+              /></a>
+            </div>
+            <div class="absolute top-3 left-3 bg-red-500 rounded z-10">
+              <p class="text-white px-2 py-1 text-xs">
+                -{{ product.discount_percent }}%
+              </p>
+            </div>
+
+            <!-- Product image centered -->
+            <div class="absolute inset-0 flex items-center justify-center z-0">
+              <img
+                src="{{ product.image.url }}"
+                alt="{{ product.title }}"
+                class="object-contain w-3/4 h-3/4"
+              />
+            </div>
+            <div
+              class="w-full bg-black justify-center text-center py-2 rounded-b-lg flex-row gap-2 hidden group-hover:flex absolute bottom-0 left-0"
+            >
+              <img src="{% static 'Cart1.png' %}" alt="" />
+              <button
+                data-product-id="{{ product.id }}"
+                class="text-xs md:text-sm add-to-cart-btn text-white cursor-pointer"
+              >
+                Add To Cart
+              </button>
+            </div>
+          </div>
+          <p class="my-2 text-[10px] md:text-sm font-bold">
+            <a href="{% url 'product_detail' product.slug %}"
+              >{{ product.title }}</a
+            >
+          </p>
+          <span class="text-red-500 pr-4">${{ product.new_price }}</span>
+          <span><del class="text-gray-500">${{ product.old_price }}</del></span>
+          <span class="mt-2 flex items-center gap-3"
+            ><img
+              src="{% static 'Five star.png' %}"
+              alt="stars"
+              class="h-3 md:h-5"
+            />
+            <span class="text-gray-400"
+              >({{ product.rating_count }})</span
+            ></span
+          >
+        </div>
+        {% endfor %}
+      </div>
+
+      <button class="flex justify-center items-center my-10 w-full">
+        <a
+          href="{% url 'all_products' %}"
+          class="bg-red-500 text-white px-10 py-1 md:px-12 md:py-3 rounded-md hover:bg-red-600 transition duration-300"
+          >View All Products</a
+        >
+      </button>
+    </section>
+
+    <section class="mb-20">
+      <div class="flex items-center gap-3">
+        <div class="w-4 h-8 bg-red-500 rounded-md"></div>
+        <div>
+          <p class="text-[16px] text-red-500 font-semibold">Featured</p>
+        </div>
+      </div>
+
+      <div class="flex items-center my-4 md:my-8">
+        <h1 class="text-2xl md:text-4xl font-semibold">New Arrival</h1>
+      </div>
+
+      <div
+        class="grid grid-cols-4 grid-rows-8 md:grid-rows-4 gap-6 max-h-[600px]"
+      >
+        <!-- Image 0 -->
+        <div
+          class="relative col-span-4 row-span-2 md:col-span-2 md:row-span-4 md:pt-16 rounded-md bg-black"
+        >
+          <img
+            src="{% static 'slim-goedkope-playstation.png' %}"
+            alt="Image 0"
+            class="w-full h-full object-contain"
+          />
+
+          <!-- Bottom-left content -->
+          <div
+            class="absolute bottom-0 left-0 p-5 md:p-10 text-white bg-opacity-50 rounded-br-md"
+          >
+            <h2 class="text-xl md:text-2xl font-semibold">PlayStation 5</h2>
+            <p class="text-xs md:text-sm my-1 md:my-3">
+              Black and White version of the PS5 coming out on sale.
+            </p>
+            <p class="text-md underline">
+              <a href="{% url 'product_detail' 'playstation-5' %}">Shop Now</a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Image 1 -->
+        <div
+          class="relative col-span-4 row-span-2 md:col-span-2 md:row-span-2 rounded-md bg-black"
+        >
+          <img
+            src="{% static 'woman-wearing-hat.png' %}"
+            alt="Image 1"
+            class="w-full h-full object-contain"
+          />
+          <!-- Bottom-left content -->
+          <div
+            class="absolute bottom-0 left-0 p-5 md:p-10 text-white bg-opacity-50 rounded-br-md"
+          >
+            <h2 class="text-xl md:text-2xl font-semibold">
+              Women’s Collections
+            </h2>
+            <p class="text-xs md:text-sm my-1 md:my-3">
+              Featured woman collections that <br />
+              give you another vibe.
+            </p>
+            <p class="text-md underline">
+              <a href="{% url 'product_detail' 'women-hat' %}">Shop Now</a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Image 2 -->
+        <div
+          class="relative col-span-4 row-span-2 md:col-span-1 md:row-span-2 rounded-md md:p-8 bg-black"
+        >
+          <img
+            src="{% static 'speaker.png' %}"
+            alt="Image 2"
+            class="w-full h-full object-contain"
+          />
+          <!-- Bottom-left content -->
+          <div
+            class="absolute bottom-0 left-0 p-5 md:p-10 text-white bg-opacity-50 rounded-br-md"
+          >
+            <h2 class="text-xl md:text-2xl font-semibold">Speakers</h2>
+            <p class="text-xs md:text-sm my-1 md:my-3">
+              Amazon wireless speakers
+            </p>
+            <p class="text-md underline">
+              <a href="{% url 'product_detail' 'speaker' %}">Shop Now</a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Image 3 -->
+        <div
+          class="relative col-span-4 row-span-2 md:col-span-1 md:row-span-2 rounded-md md:p-8 bg-black"
+        >
+          <img
+            src="{% static 'perfume.png' %}"
+            alt="Image 3"
+            class="w-full h-full object-contain"
+          />
+          <!-- Bottom-left content -->
+          <div
+            class="absolute bottom-0 left-0 p-5 md:p-10 text-white bg-opacity-50 rounded-br-md"
+          >
+            <h2 class="text-xl md:text-2xl font-semibold">Perfume</h2>
+            <p class="text-xs md:text-sm my-1 md:my-3">GUCCI INTENSE OUD EDP</p>
+            <p class="text-md underline">
+              <a href="{% url 'product_detail' 'gucci-intense-oud-edp' %}"
+                >Shop Now</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div
+        class="flex flex-col md:flex-row justify-center items-center gap-12 mb-10 md:my-28"
+      >
+        <div class="flex flex-col justify-center items-center gap-2">
+          <img src="{% static 'Services (5).png' %}" class="mb-2" alt="" />
+          <h1 class="font-bold">FREE AND FAST DELIVERY</h1>
+          <p class="text-sm">Free delivery for all orders over $140</p>
+        </div>
+        <div class="flex flex-col justify-center items-center gap-2">
+          <img src="{% static 'Services (6).png' %}" class="mb-2" alt="" />
+          <h1 class="font-bold">24/7 CUSTOMER SERVICE</h1>
+          <p class="text-sm">Friendly 24/7 customer support</p>
+        </div>
+        <div class="flex flex-col justify-center items-center gap-2">
+          <img src="{% static 'Services (7).png' %}" class="mb-2" alt="" />
+          <h1 class="font-bold">MONEY BACK GUARANTEE</h1>
+          <p class="text-sm">We reurn money within 30 days</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Scroll to Top Button -->
+<button
+  onclick="scrollToTop()"
+  class="fixed bottom-6 right-6 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center shadow-md hover:bg-red-400 transition-all duration-300 cursor-pointer"
+  title="Scroll to top"
+>
+  <!-- Heroicons or Font Awesome can be used. This is a Unicode arrow -->
+  <!-- SVG Arrow Icon -->
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6 text-white dark:text-black"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+  </svg>
+  <!-- up arrow -->
+</button>
+
+{% endblock %} {% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".heart-icon").forEach((icon) => {
+      icon.addEventListener("click", function () {
+        const productId = this.dataset.productId;
+        const img = this;
+
+        fetch("{% url 'toggle_wishlist' %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `product_id=${productId}`,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "added") {
+              img.src = "{% static 'red_heart.png' %}";
+            } else if (data.status === "removed") {
+              img.src = "{% static 'white_heart.png' %}";
+            }
+          });
+      });
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const csrftoken = document.cookie.match(/csrftoken=([\w-]+)/)?.[1];
+
+    document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const productId = btn.getAttribute("data-product-id");
+
+        fetch(`/add-to-cart/${productId}/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success") {
+              alert("Product added to cart!");
+              // optionally update cart count here
+            }
+          });
+      });
+    });
+  });
+</script>
+
+<script>
+  const scroller = document.getElementById("productScroller");
+  const scrollLeftBtn = document.getElementById("scrollLeft");
+  const scrollRightBtn = document.getElementById("scrollRight");
+
+  const scrollAmount = 300; // adjust this value based on your card size
+
+  scrollLeftBtn.addEventListener("click", () => {
+    scroller.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+  });
+
+  scrollRightBtn.addEventListener("click", () => {
+    scroller.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  });
+</script>
+
+<script>
+  function showToast(message, type = "info") {
+    const toast = document.createElement("div");
+
+    // Set Tailwind styles based on type
+    let bgColor = "bg-blue-500";
+    if (type === "error") bgColor = "bg-red-500";
+    if (type === "success") bgColor = "bg-green-500";
+    if (type === "warning") bgColor = "bg-yellow-500";
+
+    toast.className = `${bgColor} text-white px-4 py-2 rounded shadow-md animate-slide-in`;
+    toast.textContent = message;
+
+    document.getElementById("toast-container").appendChild(toast);
+
+    // Remove toast after 3 seconds
+    setTimeout(() => {
+      toast.classList.add("opacity-0");
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
+  }
+</script>
+
+<script>
+  function handleWishlist() {
+    const isLoggedIn = {{ request.user.is_authenticated|yesno:"true,false" }}; // Replace with actual login check
+
+    if (!isLoggedIn) {
+      showToast('You need to log in to use the wishlist!', 'error');
+      return;
+    }
+
+    // wishlist logic here
+  }
+</script>
+
+<script>
+  const now = new Date().getTime();
+  const targetDate = now + 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+
+  const countdown = setInterval(() => {
+    const currentTime = new Date().getTime();
+    const diff = targetDate - currentTime;
+
+    if (diff <= 0) {
+      clearInterval(countdown);
+      document.getElementById("days").textContent = "00";
+      document.getElementById("hours").textContent = "00";
+      document.getElementById("minutes").textContent = "00";
+      document.getElementById("seconds").textContent = "00";
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById("days").textContent = String(days).padStart(2, "0");
+    document.getElementById("hours").textContent = String(hours).padStart(
+      2,
+      "0"
+    );
+    document.getElementById("minutes").textContent = String(minutes).padStart(
+      2,
+      "0"
+    );
+    document.getElementById("seconds").textContent = String(seconds).padStart(
+      2,
+      "0"
+    );
+  }, 1000);
+</script>
+
+<script>
+  function scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+</script>
+
+{% endblock %}

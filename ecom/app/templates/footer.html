@@ -1,0 +1,63 @@
+{% load static %}
+
+<div
+  class="text-white p-2 gap-2 md:pt-20 md:pb-14 md:px-32 flex flex-col md:flex-row justify-between w-full"
+>
+  <div class="flex flex-col gap-2 md:gap-4 items-center md:items-start">
+    <h1 class="font-bold text-2xl">Exclusive</h1>
+    <h2 class="text-xl font-medium">Subscribe</h2>
+    <p>Get 10% off your first order</p>
+    <div class="flex items-center relative">
+      <input
+        type="text"
+        placeholder="Enter your email"
+        class="bg-black border-2 border-white rounded-sm py-1 px-2 md:py-2 md:px-4 self-start"
+      />
+      <img
+        src="{% static 'icon-send.png' %}"
+        alt=""
+        class="size-4 md:size-6 absolute left-44 top-1/2 transform -translate-y-1/2 cursor-pointer"
+      />
+    </div>
+  </div>
+  <div class="hidden md:flex flex-col gap-4">
+    <h2 class="text-xl font-medium">Support</h2>
+    <p>
+      111 Bijoy sarani, Dhaka,<br />
+      DH 1515, Bangladesh.
+    </p>
+    <p>exclusive@gmail.com</p>
+    <p>+88015-88888-9999</p>
+  </div>
+  <div class="hidden md:flex flex-col gap-4">
+    <h2 class="text-xl font-medium">Account</h2>
+    <p>My Account</p>
+    <p>Login / Register</p>
+    <p>Cart</p>
+    <p>Wishlist</p>
+    <p>Shop</p>
+  </div>
+  <div class="hidden md:flex flex-col gap-4">
+    <h2 class="text-xl font-medium">Quick Link</h2>
+    <p>Privacy Policy</p>
+    <p>Terms Of Use</p>
+    <p>FAQ</p>
+    <p>Contact</p>
+  </div>
+  <div class="flex flex-col gap-4 items-center md:items-start">
+    <h2 class="text-xl font-medium">Download App</h2>
+    <p class="text-sm text-gray-400 font-semibold">
+      Save $3 with App New User Only
+    </p>
+    <img
+      src="{% static 'footer-QRcode.png' %}"
+      alt=""
+      class="w-1/2 md:w-full"
+    />
+    <img
+      src="{% static 'social-media-icons.png' %}"
+      alt=""
+      class="w-2/4 md:w-3/4"
+    />
+  </div>
+</div>

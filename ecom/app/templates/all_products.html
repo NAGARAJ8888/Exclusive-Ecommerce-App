@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row h-[calc(100vh-80px)] overflow-hidden"> <!-- Adjust height as per header -->
+
+  <!-- left Sidebar (Left) -->
+  <form method="get" class="md:w-1/4 bg-gray-100 p-3 md:p-6 md:overflow-y-auto sticky top-0 h-full dark:bg-black">
+    <h2 class="text-lg font-semibold mb-4">Filter</h2>
+
+    <!-- Category Filter -->
+    <label class="block mb-2 font-medium">Category</label>
+    <select name="category" class="w-full p-2 mb-4 border rounded dark:bg-black cursor-pointer">
+      <option value="">All Categories</option>
+      {% for category in categories %}
+        <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+          {{ category.name }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <!-- Price Filter -->
+    <label class="block mb-2 font-medium">Price Range</label>
+    <input type="number" name="min_price" placeholder="Min Price" class="w-full p-2 mb-2 border rounded" value="{{ min_price }}">
+    <input type="number" name="max_price" placeholder="Max Price" class="w-full p-2 mb-4 border rounded" value="{{ max_price }}">
+
+    <!-- Submit Button -->
+    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 cursor-pointer">
+      Apply Filters
+    </button>
+  </form>
+
+
+
+  <!-- Products (Right) -->
+  <div class="md:w-3/4 overflow-y-auto p-2 md:p-6">
+    <div class="flex items-center gap-3 mb-4 md:mb-8">
+      <div class="w-4 h-8 bg-red-500 rounded-md"></div>
+      <div><p class="text-[16px] text-red-500 font-semibold">Products</p></div>
+    </div>
+
+    <div class="flex flex-wrap gap-3 justify-evenly md:justify-start items-center md:gap-4">
+      {% for product in products %}
+      <div>
+        <div
+          class="w-32 h-32 md:w-64 md:h-64 bg-gray-200 rounded-lg flex flex-col justify-end relative group"
+        >
+          <!--top-right -->
+          <div class="absolute top-3 right-3 z-40">
+            <a href="{% url 'product_detail' product.slug %}"><img
+              src="{% static 'Quick View.png' %}"
+              alt="quick-view"
+              class="w-7 h-7 rounded-full cursor-pointer bg-white p-1"
+            /></a>
+          </div>
+          <div class="absolute top-3 left-3 bg-red-500 rounded">
+            <p class="text-white px-2 py-1 text-xs">-{{ product.discount_percent }}%</p>
+          </div>
+
+          <!-- Product image centered -->
+          <div class="absolute inset-0 flex items-center justify-center z-0">
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.title }}"
+              class="object-contain w-3/4 h-3/4"
+            />
+          </div>
+        </div>
+        <p class="my-2 text-xs md:text-sm font-bold"><a href="{% url 'product_detail' product.slug %}">{{ product.title }}</a></p>
+        <span class="text-red-500 pr-4">${{ product.new_price }}</span>
+        <span><del class="text-gray-500">${{ product.old_price }}</del></span>
+        <span class="mt-2 flex items-center gap-3"
+          ><img src="{% static 'Five star.png' %}" alt="stars" class="h-3 md:h-5" />
+          <span class="text-gray-400">({{ product.rating_count }})</span></span
+        >
+      </div>
+      {% empty %}
+      <p>No products found.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<div class="flex flex-col md:flex-row">
+  <div class="max-w-3xl w-full">
+    <img src="{% static 'Side Image.png' %}" alt="" class="w-full h-auto" />
+  </div>
+
+  <div class="justify-center mx-auto flex flex-col my-10 md:my-0">
+    <div class="w-full md:max-w-sm">
+      <!-- Signup Form (hidden by default) -->
+      <div id="signupForm">
+        <h1 class="text-3xl md:text-4xl">Create an account</h1>
+        <p class="text-sm mt-2">Enter your details below</p>
+
+        <form
+          method="POST"
+          action="{% url 'signup' %}"
+          class="flex flex-col gap-4 mt-6"
+        >
+          {% csrf_token %} {{ reg_form.non_field_errors }}
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            class="w-full py-2 border-b-2 border-gray-300"
+          />
+          {% for error in reg_form.username.errors %}
+          <p class="text-red-500 text-sm">{{ error }}</p>
+          {% endfor %}
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            class="w-full py-2 border-b-2 border-gray-300"
+          />
+          {% for error in reg_form.email.errors %}
+          <p class="text-red-500 text-sm">{{ error }}</p>
+          {% endfor %}
+
+          <input
+            type="password"
+            name="password1"
+            placeholder="Password"
+            class="w-full py-2 border-b-2 border-gray-300"
+          />
+          {% for error in reg_form.password1.errors %}
+          <p class="text-red-500 text-sm">{{ error }}</p>
+          {% endfor %}
+
+          <input
+            type="password"
+            name="password2"
+            placeholder="Confirm Password"
+            class="w-full py-2 border-b-2 border-gray-300"
+          />
+          {% for error in reg_form.password2.errors %}
+          <p class="text-red-500 text-sm">{{ error }}</p>
+          {% endfor %}
+
+          <button
+            type="submit"
+            name="signup_submit"
+            class="w-full py-3 mx-auto rounded-sm md:mt-7 bg-red-500 text-white"
+          >
+            Create Account
+          </button>
+          <button
+            class="w-full py-3 mx-auto rounded-sm border-2 border-gray-400"
+          >
+            Sign up with Google
+          </button>
+        </form>
+
+        <div class="text-center mt-0 md:mt-4">
+          <p class="text-xs md:text-sm">
+            Already have an account?
+            <a href="{% url 'login' %}" class="border-b-2 border-gray-200"
+              >Login</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
