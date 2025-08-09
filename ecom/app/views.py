@@ -346,19 +346,16 @@ def all_products(request):
     }
     return render(request, 'all_products.html', context)
 
+from django.db.models import Q
 
 def search_products(request):
     query = request.GET.get('q', '')
-    products = []
+    products = Product.objects.all()
+    
     if query:
-        products = Product.objects.filter(title__icontains=query)[:10]  # limit results
-    data = [
-        {
-            'id': p.id,
-            'title': p.title,
-            'image': p.image.url if p.image else '',
-            'price': p.price
-        }
-        for p in products
-    ]
-    return JsonResponse(data, safe=False)
+        products = products.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query)
+        )
+    
+    return render(request, 'search_results.html', {'products': products, 'query': query})

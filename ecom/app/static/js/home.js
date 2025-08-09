@@ -1,60 +1,3 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
-
-<div
-  id="toast-container"
-  class="fixed top-4 right-4 z-50 space-y-2 text-xs md:text-sm"
-></div>
-
-<div class="mx-1 md:mx-20 lg:mx-24 xl:mx-28 2xl:mx-32">
-  <div class="flex justify-between items-center gap-8">
-    <div class="hidden lg:block">
-      <ul class="flex flex-col gap-4">
-        {% for category in categories %}
-        <li>
-          <a href="{% url 'all_products' %}?category={{ category.id }}">
-            {{ category.name }}
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div class="border-2 border-gray-400 rounded-lg min-h-[455px] hidden lg:block ml-8"></div>
-      {% include 'partials/carousel.html' %}
-  </div>
-
-{% include 'partials/flash_sale.html' %}
-{% include 'partials/categories.html' %}
-{% include 'partials/best_selling.html' %}
-{% include 'partials/offer_timer.html' %}
-{% include 'partials/explore_products.html' %}
-{% include 'partials/new_arrivel.html' %}
-{% include 'partials/advantages.html' %}
-
-</div>
-
-<!-- Scroll to Top Button -->
-<button
-  onclick="scrollToTop()"
-  class="fixed bottom-6 right-6 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center shadow-md hover:bg-red-400 transition-all duration-300 cursor-pointer"
-  title="Scroll to top"
->
-  <!-- Heroicons or Font Awesome can be used. This is a Unicode arrow -->
-  <!-- SVG Arrow Icon -->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    class="h-6 w-6 text-white dark:text-black"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    stroke-width="2"
-  >
-    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
-  </svg>
-  <!-- up arrow --></button>
-
-{% endblock %} {% block scripts %}
-<script>
   document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".heart-icon").forEach((icon) => {
       icon.addEventListener("click", function () {
@@ -80,8 +23,9 @@
       });
     });
   });
-</script>
-<script>
+
+
+
   document.addEventListener("DOMContentLoaded", function () {
     const csrftoken = document.cookie.match(/csrftoken=([\w-]+)/)?.[1];
 
@@ -106,9 +50,9 @@
       });
     });
   });
-</script>
 
-<script>
+
+
   const scroller = document.getElementById("productScroller");
   const scrollLeftBtn = document.getElementById("scrollLeft");
   const scrollRightBtn = document.getElementById("scrollRight");
@@ -122,9 +66,8 @@
   scrollRightBtn.addEventListener("click", () => {
     scroller.scrollBy({ left: scrollAmount, behavior: "smooth" });
   });
-</script>
 
-<script>
+
   function showToast(message, type = "info") {
     const toast = document.createElement("div");
 
@@ -145,9 +88,8 @@
       setTimeout(() => toast.remove(), 500);
     }, 3000);
   }
-</script>
 
-<script>
+
   function handleWishlist() {
     const isLoggedIn = {{ request.user.is_authenticated|yesno:"true,false" }}; // Replace with actual login check
 
@@ -158,9 +100,8 @@
 
     // wishlist logic here
   }
-</script>
 
-<script>
+
   const now = new Date().getTime();
   const targetDate = now + 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
 
@@ -196,18 +137,17 @@
       "0"
     );
   }, 1000);
-</script>
 
-<script>
+
   function scrollToTop() {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   }
-</script>
 
-<script>
+
+
   const carousel = document.getElementById("carousel");
   const dots = document.querySelectorAll(".dot");
   const totalSlides = dots.length;
@@ -253,8 +193,3 @@
   setInterval(nextSlide, 5000);
 
   updateDots();
-</script>
-
-{% comment %} <script src="{% static 'js/home.js' %}" defer ></script> {% endcomment %}
-
-{% endblock %}

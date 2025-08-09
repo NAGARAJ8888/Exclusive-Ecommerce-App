@@ -1,0 +1,121 @@
+{% load static %}
+<div class="flex-1 flex items-center justify-center">
+<div class="relative overflow-hidden w-[295px] md:w-[1035px] h-[344px] md:h-[420px] 2xl:w-[1035px] 2xl:h-[420px] bg-black rounded-lg mt-5">
+        <!-- Track -->
+        <div id="carousel" class="flex transition-transform duration-700 ease-in-out h-full">
+          
+          <!-- Slide 1 -->
+          <div class="w-full h-full flex-shrink-0 flex items-center px-6 text-white">
+            <!-- Left: Text -->
+            <div class="w-1/2 space-y-4 pl-8">
+              <div class="flex items-center gap-2">
+                <img src="{% static 'Apple_gray_logo.png' %}" class="w-10 h-10" alt="Apple" />
+                <span class="text-sm">iPhone 14 Series</span>
+              </div>
+              <h1 class="text-3xl 2xl:text-5xl font-semibold leading-tight">
+                Up to 10%<br />off Voucher
+              </h1>
+            <a
+                href="{% url 'product_detail' 'iphone' %}"
+                class="mt-4 px-4 py-2 rounded-full flex items-center gap-2 underline"
+              >
+                Shop Now
+              </a>
+            </div>
+            <!-- Right: Image -->
+            <div class="w-1/2 flex justify-center items-center h-full">
+              <img
+                src="{% static 'hero_img.png' %}"
+                alt="iPhone"
+                class="max-h-full object-contain"
+              />
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="w-full h-full flex-shrink-0 flex items-center px-6 text-white">
+            <div class="w-1/2 space-y-4 pl-8">
+              <div class="flex items-center gap-2">
+                <img src="{% static 'Apple_gray_logo.png' %}" class="w-10 h-10" alt="Apple" />
+                <span class="text-sm">MacBook Pro</span>
+              </div>
+              <h1 class="text-3xl 2xl:text-5xl font-semibold leading-tight">
+                Save 15%<br />on MacBooks
+              </h1>
+              <a
+                href="{% url 'product_detail' 'macbook-pro' %}"
+                class="mt-4 px-4 py-2 rounded-full flex items-center gap-2 underline"
+              >
+                Shop Now
+              </a>
+            </div>
+            <div class="w-1/2 flex justify-center items-center h-full">
+              <img
+                src="{% static 'macbook.png' %}"
+                alt="MacBook"
+                class="max-h-full object-contain"
+              />
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="w-full h-full flex-shrink-0 flex items-center px-6 text-white">
+            <div class="w-1/2 space-y-4 pl-8">
+              <div class="flex items-center gap-2">
+                <img src="{% static 'Apple_gray_logo.png' %}" class="w-10 h-10" alt="Apple" />
+                <span class="text-sm">Apple Watch</span>
+              </div>
+              <h1 class="text-3xl 2xl:text-5xl font-semibold leading-tight">
+                Get 20%<br />off Watches
+              </h1>
+              <a
+                href="{% url 'product_detail' 'apple-watch' %}"
+                class="mt-4 px-4 py-2 rounded-full flex items-center gap-2 underline"
+              >
+                Shop Now
+              </a>
+            </div>
+            <div class="w-1/2 flex justify-center items-center h-full">
+              <img
+                src="{% static 'AppleWatch.png' %}"          
+                alt="Apple Watch"
+                class="max-h-full object-contain"
+              />
+            </div>
+          </div>
+
+          <!-- Clone of Slide 1 for seamless loop -->
+          <div class="w-full h-full flex-shrink-0 flex items-center px-6 text-white">
+            <div class="w-1/2 space-y-4">
+              <div class="flex items-center gap-2">
+                <img src="{% static 'Apple_gray_logo.png' %}" class="w-10 h-10" alt="Apple" />
+                <span class="text-sm">iPhone 14 Series</span>
+              </div>
+              <h1 class="text-3xl 2xl:text-5xl font-bold leading-tight">
+                Up to 10%<br />off Voucher
+              </h1>
+              <a
+                href="{% url 'product_detail' 'iphone' %}"
+                class="mt-4 px-4 py-2 rounded-full flex items-center gap-2 underline"
+              >
+                Shop Now →
+              </a>
+            </div>
+            <div class="w-1/2 flex justify-center items-center h-full">
+              <img
+                src="{% static 'hero_img.png' %}"
+                alt="iPhone"
+                class="max-h-full object-contain"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+          <button class="dot w-3 h-3 rounded-full bg-gray-500"></button>
+          <button class="dot w-3 h-3 rounded-full bg-gray-500"></button>
+          <button class="dot w-3 h-3 rounded-full bg-gray-500"></button>
+        </div>
+      </div>
+      </div>

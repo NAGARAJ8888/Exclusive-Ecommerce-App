@@ -1,0 +1,52 @@
+{% load static %}
+
+
+      <div
+        class="flex flex-col-reverse md:flex-row justify-between items-center gap-2 md:gap-8 my-20 md:p-14 bg-black text-white"
+      >
+        <div class="flex flex-col py-3 md:gap-7">
+          <p class="text-lg font-semibold text-[#00FF66]">Categories</p>
+          <h1
+            class="text-2xl md:text-5xl font-semibold tracking-wider leading-snug"
+          >
+            Enhance Your<br />
+            Music Experience
+          </h1>
+          <div class="flex gap-4 mt-4" id="countdown">
+            <div
+              class="relative size-14 md:size-16 bg-white rounded-full items-center flex flex-col justify-center text-black"
+            >
+              <p class="text-xl font-bold absolute top-2" id="days">00</p>
+              <p class="text-xs font-semibold absolute top-8">Days</p>
+            </div>
+            <div
+              class="relative size-14 md:size-16 bg-white rounded-full items-center flex flex-col justify-center text-black"
+            >
+              <p class="text-xl font-bold absolute top-2" id="hours">00</p>
+              <p class="text-xs font-semibold absolute top-8">Hours</p>
+            </div>
+            <div
+              class="relative size-14 md:size-16 bg-white rounded-full items-center flex flex-col justify-center text-black"
+            >
+              <p class="text-xl font-bold absolute top-2" id="minutes">00</p>
+              <p class="text-xs font-semibold absolute top-8">Minutes</p>
+            </div>
+            <div
+              class="relative size-14 md:size-16 bg-white rounded-full items-center flex flex-col justify-center text-black"
+            >
+              <p class="text-xl font-bold absolute top-2" id="seconds">00</p>
+              <p class="text-xs font-semibold absolute top-8">Seconds</p>
+            </div>
+          </div>
+
+          <a
+            href="{% url 'product_detail' 'jbl-ultr-music-24' %}"
+            class="px-14 py-4 bg-[#00FF66] rounded-md self-start text-[16px] mt-6"
+          >
+            Buy Now!
+          </a>
+        </div>
+        <div>
+          <img src="{% static 'JBL-img.png' %}" alt="" />
+        </div>
+      </div>
