@@ -91,9 +91,12 @@ TEMPLATES = [
 
 STATIC_URL = '/static/'
 
-# During development only
-STATICFILES_DIRS = [ BASE_DIR / 'app_name' / 'static' ]  # adjust as needed
 
+
+# During development only
+STATICFILES_DIRS = [ BASE_DIR / 'app' / 'static' ]  # adjust as needed
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 WSGI_APPLICATION = 'ecom.wsgi.application'
 
