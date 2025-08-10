@@ -20,27 +20,28 @@
           >
             <!-- icon at top-right -->
             <div class="absolute top-3 right-3 z-40">
-              {% if product.id in wishlist_ids %}
-              <img
-                src="{% static 'red_heart.png' %}"
-                data-product-id="{{ product.id }}"
-                class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
-              />
-              {% else %}
-              <img
-                src="{% static 'white_heart.png' %}"
-                data-product-id="{{ product.id }}"
-                class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
-              />
-              {% endif %}
+            {% if product.id in wishlist_ids %}
+            <img
+              src="{% static 'red_heart.png' %}"
+              data-product-id="{{ product.id }}"
+              class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
+            />
+            {% else %}
+            <img
+              src="{% static 'white_heart.png' %}"
+              onclick="handleWishlist()"
+              data-product-id="{{ product.id }}"
+              class="w-7 h-7 rounded-xl cursor-pointer bg-white p-1 heart-icon"
+            />
+            {% endif %}
 
-              <a href="{% url 'product_detail' product.slug %}"
-                ><img
-                  src="{% static 'Quick View.png' %}"
-                  alt="quick-view"
-                  class="w-7 h-7 rounded-full cursor-pointer bg-white p-1 mt-3"
-              /></a>
-            </div>
+            <a href="{% url 'product_detail' product.slug %}"
+              ><img
+                src="{% static 'Quick View.png' %}"
+                alt="quick-view"
+                class="w-7 h-7 rounded-full cursor-pointer bg-white p-1 mt-3"
+            /></a>
+          </div>
             <div class="absolute top-3 left-3 bg-red-500 rounded z-10">
               <p class="text-white px-2 py-1 text-xs">
                 -{{ product.discount_percent }}%
